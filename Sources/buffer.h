@@ -1,11 +1,11 @@
 /*****************************************************************************
-​ ​* ​ ​ @file​ ​  buffer.h
-​ * ​ ​ @brief​ ​ Contains the functions prototypes, structure and global
- *           variable declaration essential for buffer.c
- *   @Tools_Used GCC
-​ * ​ ​ @author​ ​Devansh Mittal, Souvik De
-​ * ​ ​ @date​ ​ November 27th, 2018
-​ * ​ ​ @version​ ​ 1.0
+​ ​* ​ ​ @file​ ​  		buffer.h
+​ * ​ ​ @brief​ ​ 		Contains the function prototypes, structure and global
+ *           		variable declaration essential for buffer.c
+ *   @Tools_Used 	GCC
+​ * ​ ​ @author​  		Souvik De, ​Devansh Mittal
+​ * ​ ​ @date​ ​ 		December 12th, 2018
+​ * ​ ​ @version​ ​ 		1.0
 *****************************************************************************/
 
 #include "fsl_device_registers.h"
@@ -19,24 +19,8 @@ typedef struct
 	int Outi;	//front
 } ring_t;
 
-typedef struct
-{
-	uint16_t *Buffer;
-	int Length;
-	int Ini;	//Rear
-	int Outi;	//front
-} buffer_t;
-
-
-/* Variable which holds the receiver circular buffer */
-ring_t *ringrx;
 /* Variable which holds the transmitter circular buffer */
 ring_t *ringtx;
-
-buffer_t *DMA_buffer;
-
-volatile unsigned int fib; //Stores next element of the fibonacci series
-int flag;
 
 /**
 * @Brief  This function initializes the transmitter Circular buffer.
@@ -47,14 +31,6 @@ int flag;
 **/
 void inita();
 
-/**
-* @Brief  This function initializes the receiver Circular buffer.
-*
-* @Param  void
-*
-* @Return void
-**/
-void init_DMABuffer();
 /**
 * @Brief  This function inserts data into the selected FIFO Circular buffer.
 *
@@ -91,12 +67,3 @@ int isempty(ring_t *ring);
 * @Return 1 or 0 depending on whether it is full or not.
 **/
 int isfull(ring_t *ring);
-
-/**
-* @Brief  This function calculates the occurences of each character input by user.
-*
-* @Param  void
-*
-* @Return void
-**/
-void report();

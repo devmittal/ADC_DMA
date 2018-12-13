@@ -1,12 +1,12 @@
 /*****************************************************************************
-​ ​* ​ ​ @file​ ​  uart.c
-​ * ​ ​ @brief​ ​ This function initializes the UART and contains the blocking and
- *		     non-blocking method to communicate with the UART. It also contains
- *		     the interrupt initialization.
- *   @Tools_Used GCC
-​ * ​ ​ @author​ ​Devansh Mittal, Souvik De
-​ * ​ ​ @date​ ​ November 27th, 2018
-​ * ​ ​ @version​ ​ 1.0
+​ ​* ​ ​ @file​ ​  		uart.c
+​ * ​ ​ @brief​ ​ 		This function initializes the UART and contains the blocking and
+ *		     		non-blocking method to communicate with the UART. It also contains
+ *		     		the interrupt initialization.
+ *   @Tools_Used 	GCC
+​ * ​ ​ @author​  		Souvik De, ​Devansh Mittal
+​ * ​ ​ @date​ ​ 		December 12th, 2018
+​ * ​ ​ @version​ ​ 		1.0
 *****************************************************************************/
 
 #include "fsl_device_registers.h"
@@ -151,24 +151,13 @@ char UART_GetChar(void)
 
 void UART0_IRQHandler (void)
 {
-  char c = 0;
-
- if ((UART0_S1 & UART_S1_TDRE_MASK) && !isempty(ringtx))
-  {
-	 //UART0_D = data;
-	 UART0_D = remove_data(ringtx);
-	 if(isempty(ringtx))
-	 UART0_C2 &= ~UART_C2_TIE_MASK;
-  }
-
- if (UART0_S1&UART_S1_RDRF_MASK && !isfull(ringrx))
- {
-	 flag = 1;
-	 c = UART0_D;
-	 insert_data(ringrx, c);
-	if(isfull(ringrx))
-		remove_data(ringrx);
- }
+	if ((UART0_S1 & UART_S1_TDRE_MASK) && !isempty(ringtx))
+	{
+		//UART0_D = data;
+		UART0_D = remove_data(ringtx);
+		if(isempty(ringtx))
+			UART0_C2 &= ~UART_C2_TIE_MASK;
+	}
 }
 
 /* Enabling the UART0 interrupt */
@@ -191,6 +180,7 @@ void uart_string(char *p)
 	}
 }
 
+/* Transmits Data (single character or ASCII value) */
 void uart_data(unsigned char c)
 {
 	while(isfull(ringtx)); //Check if the transmit buffer is full
@@ -198,6 +188,7 @@ void uart_data(unsigned char c)
 	UART0_C2 |= UART_C2_TIE_MASK;
 }
 
+/* Transmits Numbers after converting them into ASCII */
 void uart_num(unsigned long int number)
 {
     unsigned char r = 0, j = 0, y = 0, a[10];

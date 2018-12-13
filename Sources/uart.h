@@ -1,15 +1,14 @@
 /*****************************************************************************
-​ ​* ​ ​ @file​ ​  buffer.h
-​ * ​ ​ @brief​ ​ Contains the functions prototypes essential for uart.c
- *   @Tools_Used GCC
-​ * ​ ​ @author​ ​Devansh Mittal, Souvik De
-​ * ​ ​ @date​ ​ November 27th, 2018
-​ * ​ ​ @version​ ​ 1.0
+​ ​* ​ ​ @file​ ​  		uart.h
+​ * ​ ​ @brief​ ​ 		Contains the function prototypes essential for uart.c
+ *   @Tools_Used 	GCC
+​ * ​ ​ @author​  		Souvik De, ​Devansh Mittal
+​ * ​ ​ @date​ ​ 		December 12th, 2018
+​ * ​ ​ @version​ ​ 		1.0
 *****************************************************************************/
 
 #include "fsl_device_registers.h"
 
-//uint8_t data;
 
 /**
 * @Brief This function initializes the UART.
@@ -62,12 +61,28 @@ void enable_irq (int irq);
 #endif
 
 /**
-* @Brief This function writes data to be transmitted out of UART to the circular buffer.
+* @Brief This function transmits string out of UART using the circular buffer.
 *
-* @Param pointer to character to be transmitted out of UART.
+* @Param Pointer to string to be transmitted out of UART.
 *
 * @Return void
 **/
 void uart_string(char *p);
+
+/**
+* @Brief This function transmits numbers out of UART using the circular buffer.
+*
+* @Param Number to be transmitted out of UART.
+*
+* @Return void
+**/
 void uart_num(unsigned long int number);
+
+/**
+* @Brief This function transmits data out of UART using the circular buffer.
+*
+* @Param Data to be transmitted out of UART.
+*
+* @Return void
+**/
 void uart_data(unsigned char c);
