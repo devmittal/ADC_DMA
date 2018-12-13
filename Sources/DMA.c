@@ -74,7 +74,7 @@ void DMA_init(void)
 
 void DMA0_IRQHandler(void)
 {
-	PTB_BASE_PTR->PCOR = 1 << 18;
+	PTB_BASE_PTR->PCOR = 1 << 9;
 
 	if(DMA_FLAG == 0)
 	{
@@ -107,5 +107,5 @@ void DMA0_IRQHandler(void)
 
 	DMA_DSR_BCR0 |= DMA_DSR_BCR_DONE_MASK;
 	DMA_init();
-	PTB_BASE_PTR->PSOR = 1 << 18;
+	PTB_BASE_PTR->PSOR = 1 << 9;
 }

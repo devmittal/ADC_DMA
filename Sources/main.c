@@ -56,8 +56,8 @@ int main(void)
 	DMA_FLAG = 0;
 
 	SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;	// PTB0 clock
-	PORTB_BASE_PTR->PCR[18] = PORT_PCR_MUX(1);
-	PTB_BASE_PTR->PDDR = (1 << 18);
+	PORTB_BASE_PTR->PCR[9] = PORT_PCR_MUX(1);
+	PTB_BASE_PTR->PDDR = (1 << 9);
 
 	/* Initialize circular buffer for transmitting characters to Terminal Emulator */
 	inita();
@@ -79,12 +79,16 @@ int main(void)
 				j = SearchDBFSLookup(DMA_data_temp[i]);
 				if(j <= 0)
 				{
-					uart_data('-');
+					if(j < 0)
+						uart_data('-');
+
 					j = j * (-1);
+
 					if(j != 0)
 						uart_num(j);
 					else
 						uart_data('0');
+
 					uart_string(" dBFS");
 				}
 				else
