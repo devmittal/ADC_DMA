@@ -51,6 +51,10 @@ int main(void)
 
 	count = 0;		//Initialize Data Set Counter
 	DMA_FLAG = 0;	//Initialize DMA ISR Flag
+	toggel_buffer_address = 0;
+
+	/* Create dBFS Lookup table */
+	CreatDBFSLookup();
 
 	SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;			// PTB0 clock
 	PORTB_BASE_PTR->PCR[9] = PORT_PCR_MUX(1);	//GPIO Operation
@@ -72,7 +76,7 @@ int main(void)
 			uart_string("\r\n");
 			uart_num(peak);	//Display Calculated Peak Value from DMA - ISR
 
-			for(i = 0 ; i < 64 ; i++)
+			for(i = 0 ; i < 32 ; i++)
 			{
 				uart_string(" \t");
 				j = SearchDBFSLookup(DMA_data_temp[i]);	//Display Interpolated dBFS Value from Lookup Table

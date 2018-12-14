@@ -46,14 +46,30 @@ void CreatDBFSLookup(void)
 uint16_t GetLocalPeak()
 {
 	int i=0;
-	uint16_t temp = DMA_data[0];
+	uint16_t temp;
 
-	/* Get Maximum Value (Peak) of DMA (ADC Samples) Data Set */
-	for (i = 1; i < 64 ; i++)
+	if(toggel_buffer_address == 0) //For Lower half of Buffer
 	{
-		if(temp < DMA_data[i])
+		temp = DMA_data[0];
+		/* Get Maximum Value (Peak) of DMA (ADC Samples) Data Set */
+		for (i = 1; i < 32 ; i++)
 		{
-			temp = DMA_data[i];
+			if(temp < DMA_data[i])
+			{
+				temp = DMA_data[i];
+			}
+		}
+	}
+	else //For Upper half of Buffer
+	{
+		temp = DMA_data[32];
+		/* Get Maximum Value (Peak) of DMA (ADC Samples) Data Set */
+		for (i = 33; i < 64 ; i++)
+		{
+			if(temp < DMA_data[i])
+			{
+				temp = DMA_data[i];
+			}
 		}
 	}
 	return temp;
@@ -70,8 +86,13 @@ void DMA_init(void)
 
 	/* Configuring DMA */
 	DMA_SAR0 = (uint32_t)&ADC0->R[0];		//Source Address (ADC)
-	DMA_DAR0 = (uint32_t)DMA_data;			//Destination Address (Buffer)
-	DMA_DSR_BCR0 = DMA_DSR_BCR_BCR(128);	//Bytes to be transfered (128 Bytes)
+
+	if(toggel_buffer_address == 0)
+		DMA_DAR0 = (uint32_t)DMA_data;			//Destination Address (Buffer-Lower Half)
+	else
+		DMA_DAR0 = (uint32_t)(DMA_data + 32);			//Destination Address (Buffer - Upper Half)
+
+	DMA_DSR_BCR0 = DMA_DSR_BCR_BCR(64);	//Bytes to be transfered (64 Bytes)
 
 	DMA_DCR0 |= (DMA_DCR_SSIZE(2)) |		//Source Size BUS (16 bits)
 				(DMA_DCR_D_REQ_MASK) |		//ERQ bit is cleared when the BCR is exhausted
@@ -96,11 +117,13 @@ void DMA0_IRQHandler(void)
 	{
 		count++;					//Track Number of Data Sets
 
-		if(count == 1)				//Create Lookup table before processing first data set
-			CreatDBFSLookup();
+		if(toggel_buffer_address == 0)
+			for(parser = 0; parser < 32 ; parser++)
+				DMA_data_temp[parser] = DMA_data[parser];	//Store Lower Half in temporary variable to safeguard against overwriting, until operations are over
+		else
+			for(parser = 32; parser < 64 ; parser++)
+				DMA_data_temp[parser-32] = DMA_data[parser];	//Store Upper Half in temporary variable to safeguard against overwriting, until operations are over
 
-		for(parser = 0; parser < 64 ; parser++)
-			DMA_data_temp[parser] = DMA_data[parser];	//Store in temporary variable to safeguard against overwriting, until operations are over
 
 		local_peak = GetLocalPeak();					//Get Peak value of a data set
 
@@ -123,6 +146,7 @@ void DMA0_IRQHandler(void)
 
 	/* CLear Done Flag to restart */
 	DMA_DSR_BCR0 |= DMA_DSR_BCR_DONE_MASK;
+	toggel_buffer_address ^= 1;
 	DMA_init();		//Initialize DMA Again
 
 	PTB_BASE_PTR->PSOR = 1 << 9;	//Clear GPIO

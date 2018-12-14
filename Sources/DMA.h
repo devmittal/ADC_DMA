@@ -44,7 +44,7 @@ void CreatDBFSLookup(void);
 /* 128 Byte ADC Data in DMA Buffer */
 volatile uint16_t DMA_data[64];
 /* Temporary Storage variable for DMA Data (128 byte ADC Sample Set) */
-volatile uint16_t DMA_data_temp[64];
+volatile uint16_t DMA_data_temp[32];
 /* Sample set Tracker and For loop parser respectively */
 volatile int count,parser;
 /* Local Peak of a data set and peak after comparing two peaks of subsequent data sets repectively */
@@ -55,7 +55,8 @@ volatile unsigned char DMA_FLAG;
 volatile int dbfs_lookup[80], dbfs_count;
 /* Lookup table for Raw DMA Data */
 volatile uint16_t raw_lookup[80];
-
+/* To toggle destination address of DMA - DMA Buffer Upper and Lower Half Alternately*/
+volatile unsigned char toggel_buffer_address;
 
 
 #endif /* SOURCES_DMA_H_ */
